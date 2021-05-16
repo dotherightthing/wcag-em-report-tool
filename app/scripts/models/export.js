@@ -110,8 +110,21 @@ angular.module('wcagReporter')
       },
 
       getFileName: function (ext) {
-        var title = (evalModel.scopeModel.website.siteName +
-			' evaluation report');
+        var d = new Date();
+        var year = d.getFullYear();
+        var month = d.getMonth() + 1;
+        var date = d.getDate();
+
+        if (month < 10) {
+          month = `0${month}`;
+        }
+
+        if (date < 10) {
+          date = `0${date}`;
+        }
+
+        var titleDate = `${year}${month}${date}`;
+        var title = (evalModel.scopeModel.website.siteName + ' evaluation report-' + titleDate);
         ext = ext || 'json';
         title = title.trim();
 
