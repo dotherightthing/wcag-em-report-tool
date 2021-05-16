@@ -61,8 +61,21 @@
     margin-bottom: ($line-height-computed / 3);
   }
 
-  a {
+  a,
+  .a {
     text-decoration: underline;
+  }
+
+  button.a {
+    background-color: transparent;
+    color: #005a9c;
+    padding: 0;
+    border: 0;
+
+    &:hover,
+    &:focus {
+      color: #002e50;
+    }
   }
 }
 

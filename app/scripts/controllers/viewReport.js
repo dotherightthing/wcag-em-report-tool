@@ -10,7 +10,7 @@ angular.module('wcagReporter')
     wcagReporterExport,
     toggleCriterionText
   ) {
-    var htmlBlob;
+    var htmlBlob, html;
 
     $scope.state = appState.moveToState('viewReport');
     $scope.scope = evalModel.scopeModel;
@@ -39,7 +39,7 @@ angular.module('wcagReporter')
     ];
 
     $scope.$on('reportReady', function (e, data) {
-      var html = tpl[0] + data.html() + tpl[1];
+      html = tpl[0] + data.html() + tpl[1];
 
       htmlBlob = wcagReporterExport.getBlob(html, 'text/html;charset=utf-8');
       $document.find('#html_download_link')
@@ -60,7 +60,20 @@ angular.module('wcagReporter')
       }
     };
 
+    $scope.savePdfBlobIE = function () {
+      var pdfBlob = $document.find('#pdf_download_link')
+        .attr('href');
+      wcagReporterExport.saveBlobIE(pdfBlob, $scope.exportPdfFile);
+    };
+
+    $scope.savePdf = function () {
+      if (htmlBlob) {
+        wcagReporterExport.savePdf(html, $scope.exportHtmlFile);
+      }
+    };
+
     $scope.exportHtmlFile = wcagReporterExport.getFileName('html');
+    $scope.exportPdfFile = wcagReporterExport.getFileName('pdf');
     $scope.exportJsonUrl = wcagReporterExport.getBlobUrl();
     $scope.exportJsonFile = wcagReporterExport.getFileName();
   });

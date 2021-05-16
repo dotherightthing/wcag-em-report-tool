@@ -3,7 +3,7 @@
  *
  */
 angular.module('wcagReporter')
-  .factory('wcagReporterExport', function (evalModel, reportStorage, pkgData, $rootScope) {
+  .factory('wcagReporterExport', function (evalModel, reportStorage, pkgData, $rootScope, $http, $document) {
     function getJsonLd () {
       var jsonLd = {
         '@context': evalModel.context,
@@ -25,6 +25,10 @@ angular.module('wcagReporter')
 
       return jsonLd;
     }
+
+    // Track Object URLs to manage the browser memory.
+    // https://www.bennadel.com/blog/3472-downloading-text-using-blobs-url-createobjecturl-and-the-anchor-download-attribute-in-javascript.htm
+    var pdfBlob = null;
 
     var exportModel = {
 
@@ -62,6 +66,43 @@ angular.module('wcagReporter')
 	        }
       },
 
+      savePdf: function (html, filename) {
+        filename = filename || exportModel.getFileName();
+
+        $http.post('http://localhost:3000/pdf/create', { html: html })
+          .then(function (response) {
+            const filename = response.data;
+
+            $http.get(filename, { responseType: 'blob' })
+              .then(function (pdf) {
+
+                // release the previous Object URL in browser memory
+                // https://www.bennadel.com/blog/3472-downloading-text-using-blobs-url-createobjecturl-and-the-anchor-download-attribute-in-javascript.htm
+                if (pdfBlob) {
+                  URL.revokeObjectURL(pdfBlob);
+                }
+
+                // blob:http://localhost:9000/29abdcd2-0ba8-4a6d-bb34-0bba6a623c3d
+                pdfBlob = exportModel.getBlob(pdf.data, 'application/pdf');
+
+                $document.find('#pdf_download_link')
+                  .attr(
+                    'href',
+                    exportModel.getBlobUrl(pdfBlob)
+                  );
+
+                // doesn't work with $document.find('#pdf_download_link').
+                document.getElementById('pdf_download_link')
+                  .click();
+              });
+          })
+          .catch(function (response) {
+            console.error(response.status, response.data);
+          });
+      },
+
+      // BLOB = Binary Large OBject
+      // https://stackoverflow.com/a/30881444
       getBlob: function (data, type) {
         data = data || exportModel.getString();
         type = type || 'application/json;charset=utf-8';

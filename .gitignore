@@ -12,3 +12,5 @@ Thumbs.db
 /.project
 npm-debug.log
 .DS_Store
+app/tmp/*.html
+app/tmp/*.pdf

@@ -26,14 +26,17 @@ See [Change log](changelog.md) for details about the latest version of the WCAG-
 Before you can install the WCAG-EM Report Tool you will need
 to install a few components:
 
-- NodeJS https://nodejs.org/en/ (or [NodeJS with Node Version Manager installed](https://github.com/creationix/nvm))
+- NodeJS    https://nodejs.org/en/ (or [NodeJS with Node Version Manager installed](https://github.com/creationix/nvm))
 
   Minimum NodeJS version "lts/carbon" (Long term support)
 
-- Ruby   https://www.ruby-lang.org/en/documentation/installation/
+- Ruby      https://www.ruby-lang.org/en/documentation/installation/
 
   Latest stable version
 
+- PrinceXML https://www.princexml.com/download/
+
+  Latest version (tested on 14.2)
 
 # Install
 

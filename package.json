@@ -54,10 +54,14 @@
   "scripts": {
     "install": "npx bower install && gem install compass",
     "build": "npx grunt build",
-    "start": "npx grunt serve",
+    "start": "npx grunt serve & node ./scripts/node-server.js",
     "test": "npx grunt test",
     "lint": "npm run lint:styles && npm run lint:scripts",
     "lint:scripts": "npx eslint ./app/scripts ./test -f table",
     "lint:styles": "npx stylelint ./app/styles/*.scss -f verbose"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
   }
 }
