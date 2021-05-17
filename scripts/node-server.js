@@ -22,7 +22,7 @@ app.use(express.json({
 app.use(express.urlencoded({
   extended: true
 }));
-app.use('/downloads', express.static('app/tmp'));
+app.use('/downloads', express.static('tmp'));
 
 app.listen(3000, function () {
   console.log('Node server listening on http://localhost:3000');
@@ -38,12 +38,12 @@ app.post('/pdf/create', function (req, res) {
   const fileName = 'evaluation-report';
 
   // write the passed data to a temporary file which prince can access
-  fs.writeFileSync(`app/tmp/${fileName}.html`, htmlStr);
+  fs.writeFileSync(`tmp/${fileName}.html`, htmlStr);
 
   // assemble the prince shell command
   // --javascript flag + princexml-angular-compat.js required for rendering of Angular template
-  let cmd = `prince app/tmp/${fileName}.html
---output=app/tmp/${fileName}.pdf
+  let cmd = `prince tmp/${fileName}.html
+--output=tmp/${fileName}.pdf
 --javascript
 --pdf-profile=PDF/UA-1
 --pdf-xmp=pdfUA-ID.xmp
