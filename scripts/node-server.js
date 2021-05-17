@@ -62,6 +62,8 @@ app.post('/pdf/create', function (req, res) {
       throw e;
     }
 
+    fs.unlinkSync(`tmp/${fileName}.html`);
+
     // return the generated filepath
     // res.download didn't work
     // https://masteringjs.io/tutorials/express/post
