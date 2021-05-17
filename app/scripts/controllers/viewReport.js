@@ -11,7 +11,10 @@ angular.module('wcagReporter')
     toggleCriterionText,
     $http
   ) {
+    var author = evalModel.reportModel.creator.name || '';
     var htmlBlob, html;
+    var subject = 'Web Accessibility Report';
+    var title = evalModel.reportModel.title;
 
     // Track Object URLs to manage the browser memory.
     // https://www.bennadel.com/blog/3472-downloading-text-using-blobs-url-createobjecturl-and-the-anchor-download-attribute-in-javascript.htm
@@ -55,7 +58,12 @@ angular.module('wcagReporter')
         );
 
       // pdf
-      $http.post('http://localhost:3000/pdf/create', { html: html })
+      $http.post('http://localhost:3000/pdf/create', {
+        author: author,
+        html: html,
+        subject: subject,
+        title: title
+      })
         .then(function (response) {
           const pdf = response.data;
 
