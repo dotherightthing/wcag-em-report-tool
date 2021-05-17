@@ -8,9 +8,14 @@ angular.module('wcagReporter')
     evalModel,
     appState,
     wcagReporterExport,
-    toggleCriterionText
+    toggleCriterionText,
+    $http
   ) {
     var htmlBlob, html;
+
+    // Track Object URLs to manage the browser memory.
+    // https://www.bennadel.com/blog/3472-downloading-text-using-blobs-url-createobjecturl-and-the-anchor-download-attribute-in-javascript.htm
+    var pdfBlob = null;
 
     $scope.state = appState.moveToState('viewReport');
     $scope.scope = evalModel.scopeModel;
@@ -39,6 +44,7 @@ angular.module('wcagReporter')
     ];
 
     $scope.$on('reportReady', function (e, data) {
+      // html
       html = tpl[0] + data.html() + tpl[1];
 
       htmlBlob = wcagReporterExport.getBlob(html, 'text/html;charset=utf-8');
@@ -47,6 +53,34 @@ angular.module('wcagReporter')
           'href',
           wcagReporterExport.getBlobUrl(htmlBlob)
         );
+
+      // pdf
+      $http.post('http://localhost:3000/pdf/create', { html: html })
+        .then(function (response) {
+          const pdf = response.data;
+
+          $http.get(pdf, { responseType: 'blob' })
+            .then(function (blob) {
+              // release the previous Object URL in browser memory
+              // https://www.bennadel.com/blog/3472-downloading-text-using-blobs-url-createobjecturl-and-the-anchor-download-attribute-in-javascript.htm
+              // "Reload Site?"
+              if (pdfBlob) {
+                URL.revokeObjectURL(pdfBlob);
+              }
+
+              // blob:http://localhost:9000/29abdcd2-0ba8-4a6d-bb34-0bba6a623c3d
+              pdfBlob = wcagReporterExport.getBlob(blob.data, 'application/pdf');
+
+              $document.find('#pdf_download_link')
+                .attr(
+                  'href',
+                  wcagReporterExport.getBlobUrl(pdfBlob)
+                );
+            });
+        })
+        .catch(function (response) {
+          console.error(response.status, response.data);
+        });
     });
 
     $scope.downloadJsonStart = function () {
@@ -61,14 +95,8 @@ angular.module('wcagReporter')
     };
 
     $scope.savePdfBlobIE = function () {
-      var pdfBlob = $document.find('#pdf_download_link')
-        .attr('href');
-      wcagReporterExport.saveBlobIE(pdfBlob, $scope.exportPdfFile);
-    };
-
-    $scope.savePdf = function () {
-      if (htmlBlob) {
-        wcagReporterExport.savePdf(html, $scope.exportHtmlFile);
+      if (pdfBlob) {
+        wcagReporterExport.saveBlobIE(pdfBlob, $scope.exportPdfFile);
       }
     };
 
