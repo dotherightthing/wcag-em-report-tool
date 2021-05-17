@@ -41,10 +41,8 @@ app.post('/pdf/create', function (req, res) {
   fs.writeFileSync(`tmp/${fileName}.html`, htmlStr);
 
   // assemble the prince shell command
-  // --javascript flag + princexml-angular-compat.js required for rendering of Angular template
   let cmd = `prince tmp/${fileName}.html
 --output=tmp/${fileName}.pdf
---javascript
 --pdf-profile=PDF/UA-1
 --pdf-xmp=pdfUA-ID.xmp
 --no-artificial-fonts
