@@ -32,6 +32,9 @@ angular.module('wcagReporter')
           scope.outcomes = getOutcomes();
           scope.updateMetadata = function () {
             CriterionAssert.updateMetadata(scope.assert);
+
+            // TODO use a more appropriate scope
+            $rootScope.$broadcast('audit:update-metadata');
           };
 
           scope.getStaticHtmlResult = function (text) {

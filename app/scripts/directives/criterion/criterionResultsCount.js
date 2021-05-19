@@ -1,6 +1,6 @@
 'use strict';
 angular.module('wcagReporter')
-  .directive('criterionResultsCount', function (directivePlugin, evalSampleModel, selectedCasesOnlyFilter) {
+  .directive('criterionResultsCount', function (directivePlugin, evalSampleModel, selectedCasesOnlyFilter, $rootScope) {
     function singlePageAssert (scope) {
       var pages = evalSampleModel.getFilledPages();
       var asserts = scope.criterion.getSinglePageAsserts();
@@ -11,7 +11,6 @@ angular.module('wcagReporter')
         });
     }
 
-    // TODO: update the count if the .result-select is used to change a result outcome
     function testedSinglePageAssert (singlePageAssert) {
       var results = [];
 
@@ -41,6 +40,12 @@ angular.module('wcagReporter')
           }
 
           $scope.$on('audit:sample-change', function () {
+            $scope.singlePageAsserts = singlePageAssert($scope);
+            $scope.testedSinglePageAsserts = testedSinglePageAssert($scope.singlePageAsserts);
+          });
+
+          // TODO use a more appropriate scope
+          $rootScope.$on('audit:update-metadata', function () {
             $scope.singlePageAsserts = singlePageAssert($scope);
             $scope.testedSinglePageAsserts = testedSinglePageAssert($scope.singlePageAsserts);
           });
